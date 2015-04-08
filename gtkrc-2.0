@@ -1,0 +1,15 @@
+# -- THEME AUTO-WRITTEN DO NOT EDIT
+include "/home/oluja/.themes/wfpaisa-Plane-Gtk3-5e3f0ee/gtk-2.0/gtkrc"
+gtk-icon-theme-name=plane
+
+style "user-font" {
+	font_name = "Sans 10"
+}
+
+widget_class "*" style "user-font"
+
+gtk-font-name="Sans 10"
+
+include "/home/oluja/.gtkrc.mine"
+
+# -- THEME AUTO-WRITTEN DO NOT EDIT

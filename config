@@ -1,0 +1,251 @@
+set $mod Mod4
+
+#############
+# Autostart #
+#############
+
+exec --no-startup-id sh ~/.fehbg
+exec --no-startup-id xset dpms 600
+exec --no-startup-id ~/.i3/autostart.sh
+
+# font xft:Ubuntu 8.8
+font xft:Liberation 8.2
+
+new_window pixel 1
+focus_follows_mouse  no
+
+#don't move to neighbouring screen with hjkl
+force_focus_wrapping yes
+
+##########
+# Colors #
+##########
+
+set $statusline #5f5f5f
+set $ActivBackground #E0E0E0
+set $ActivBG #E0E0E0
+set $ActivTxt #303030
+set $GrayTxt #AAAAAA
+set $blue #005588
+set $gray1 #484848
+set $gray2 #333333
+
+# Set color for windows   Border    Background  Text    indicator
+client.focused            $ActivBG  $ActivBG  $ActivTxt #FF0000
+client.focused_inactive   $gray1    $gray1      #FFFFFF #FF0000
+client.unfocused          $gray1    $gray1      #AAAAAA #FF0000
+#client.urgent               $rd        $rd         $tx
+
+# use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+# Mouse middle click
+bindsym $mod+m exec --no-startup-id "xdotool click --clearmodifiers 2"
+
+# start a terminal
+bindsym $mod+Return exec pantheon-terminal
+
+# kill focused window
+bindsym $mod+c kill
+
+# start dmenu (a program launcher)
+bindsym $mod+p exec --no-startup-id i3-dmenu-desktop
+# bindsym Mod1+F2 exec "dmenu_run -nb black -p run"
+
+bindsym $mod+Shift+p exec "~/.bin/pass-autotype-dmenu"
+
+# change focus
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+# move focused window
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+# split in horizontal orientation
+bindsym $mod+g split h
+
+# split in vertical orientation
+bindsym $mod+v split v
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen
+
+# change container layout (tabbed, toggle split)
+bindsym $mod+t layout tabbed
+bindsym $mod+s layout stacked
+bindsym $mod+e layout toggle split
+
+# container navigation
+bindsym $mod+a focus parent
+bindsym $mod+b focus child
+
+# move container between displays
+bindsym $mod+comma move workspace to output left
+bindsym $mod+period move workspace to output right
+
+# toggle tiling / floating
+bindsym $mod+Shift+f floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+##############
+# Workspaces #
+##############
+
+# rename current workspace
+bindsym $mod+Control+r exec i3-input -F 'rename workspace to "%s"' -P 'New name: '
+
+# switch to last workspace
+bindsym $mod+d workspace back_and_forth
+
+# switch to workspace
+bindsym $mod+1 workspace "1:Web"
+bindsym $mod+2 workspace "2:Terminal"
+bindsym $mod+3 workspace "3:Tools"
+bindsym $mod+4 workspace "4:Chat"
+bindsym $mod+5 workspace "5:Media"
+bindsym $mod+q workspace "6:Mail"
+bindsym $mod+w workspace "7:RDP"
+bindsym $mod+8 workspace "8:Other"
+bindsym $mod+9 workspace "9:VBox"
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace 1:Web
+bindsym $mod+Shift+2 move container to workspace 2:Terminal
+bindsym $mod+Shift+3 move container to workspace 3:Tools
+bindsym $mod+Shift+4 move container to workspace 4:Chat
+bindsym $mod+Shift+5 move container to workspace 5:Media
+bindsym $mod+Shift+q move container to workspace 6:Mail
+bindsym $mod+Shift+w move container to workspace 7:RDP
+bindsym $mod+Shift+8 move container to workspace 8:Other
+bindsym $mod+Shift+9 move container to workspace 9:VBox
+
+bindsym $mod+z reload
+bindsym $mod+Shift+r restart
+bindsym $mod+Mod1+Delete exit
+
+##############
+# Resize mod #
+##############
+
+mode "resize" {
+        bindsym h   resize shrink width 5 px or 5 ppt
+        bindsym j   resize grow height 5 px or 5 ppt
+        bindsym k   resize shrink height 5 px or 5 ppt
+        bindsym l   resize grow width 5 px or 5 ppt
+
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape or q or ^[
+        bindsym Return mode "default"
+        bindsym q mode "default"
+        bindsym Escape mode "default"
+        bindcode Control+34 mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+###################
+# multimedia keys #
+###################
+
+bindsym XF86AudioRaiseVolume exec ponymix increase 5%
+bindsym XF86AudioLowerVolume exec ponymix decrease 5%
+bindsym XF86AudioMute exec ponymix toggle
+
+bindsym XF86MonBrightnessUp exec xbacklight +10
+bindsym XF86MonBrightnessDown exec xbacklight -10
+#bindsym XF86Display exec "synclient TouchpadOff=$(synclient -l | grep -c 'TouchpadOff.*=.*0')"
+bindsym XF86Display exec ~/.i3/bin/screen.sh
+
+bindsym XF86Sleep exec xset dpms force off
+#i3exit
+
+bindsym XF86TouchpadToggle exec "synclient TouchpadOff=$(synclient | awk '/TouchpadOff/ {print ($3+1)%2}')"
+
+# bindsym $mod+m exec "volti-mixer"
+bindsym $mod+Shift+a exec "pavucontrol"
+
+# i3bar
+bar {
+    status_command    python3 ~/.i3/status.py
+    position          top
+    workspace_buttons yes
+        colors {
+                statusline $statusline
+                background $ActivBackground
+                # Workspace color   Border  Background  Text
+                focused_workspace   $gray2  $gray2      #FFFFFF
+                inactive_workspace  $gray1  $gray1      #AAAAAA
+        }
+}
+
+bindsym Mod1+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+
+##############
+# Scratchpad #
+##############
+
+# Make the currently focused window a scratchpad
+bindsym $mod+Shift+minus move scratchpad
+
+# Show the first scratchpad window
+bindsym $mod+minus scratchpad show
+
+# Show the sup-mail scratchpad window, if any.
+bindsym mod+g [title="^Sup ::"] scratchpad show
+
+#############
+# Exit mode #
+#############
+
+set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
+mode "$mode_system" {
+    bindsym l exec --no-startup-id i3exit lock, mode "default"
+    bindsym e exec --no-startup-id i3exit logout, mode "default"
+    bindsym s exec --no-startup-id i3exit suspend, mode "default"
+    bindsym h exec --no-startup-id i3exit hibernate, mode "default"
+    bindsym r exec --no-startup-id i3exit reboot, mode "default"
+    bindsym Shift+s exec --no-startup-id i3exit shutdown, mode "default"
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+Next mode "$mode_system"
+
+###############
+# Lock screen #
+###############
+
+bindsym Control+Mod1+l exec --no-startup-id slock, mode "default"
+
+#########################
+# Applications settings #
+#########################
+
+# Assing application to Workspace
+assign [class="Dwb"] 1:Main
+assign [class="URxvt"] 2:Terminal
+assign [class="Pantheon-terminal"] 2:Terminal
+assign [class="Skype"] 4:Chat
+assign [class="Gajim"] 4:Chat
+assign [class="Xchat"] 4:Chat
+assign [class="Gajim"] 4:Chat
+
+for_window [class="Typhoon"] floating enable
+for_window [class="Nemo" instance="file_progress"] floating enable
+# browser pop-ups
+for_window [window_role="pop-up"] floating enable
+#
+
+### Testing
+popup_during_fullscreen smart
